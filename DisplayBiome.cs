@@ -15,17 +15,11 @@ namespace DisplayBiome
 
     public class BiomeInfoDisplay : InfoDisplay
     {
-        private PropertyInfo[] propertyInfos;
-
         public override string Texture => "Terraria/Images/UI/InfoIcon_8";
 
         public override void SetStaticDefaults()
         {
             InfoName.SetDefault("Biome");
-
-            var ignores = new string[] { "ZonePurity", "ZoneOverworldHeight", "ZoneRockLayerHeight", "ZoneSkyHeight", "ZoneRain", "ZoneUndergroundDesert", "ZoneSandstorm", "ZoneDirtLayerHeight", "ZoneWaterCandle", "ZonePeaceCandle", "ZoneGemCave", "ZoneOldOneArmy" };
-            propertyInfos = Main.LocalPlayer.GetType().GetProperties();
-            propertyInfos = Array.FindAll(propertyInfos, (p) => p.Name.StartsWith("Zone") && p.PropertyType.Name == "Boolean" && !ignores.Contains(p.Name));
         }
 
         public override bool Active()
@@ -39,14 +33,209 @@ namespace DisplayBiome
 
             // Vanila Biomes
             var values = new List<string>();
-            foreach (var prop in propertyInfos)
+            var zoneInfected = p.ZoneCorrupt || p.ZoneCrimson || p.ZoneHallow;
+            if (p.ZoneCorrupt)
             {
-                if ((bool)prop.GetValue(p))
+                var isNormal = true;
+                if (p.ZoneDesert)
                 {
-                    var biome = replaceZonePrefix(prop.Name);
-                    var text = getText(p, biome);
-                    values.Add(text);
+                    if (p.ZoneUndergroundDesert)
+                    {
+                        values.Add(Language.GetTextValue("Bestiary_Biomes.CorruptUndergroundDesert"));
+                        isNormal = false;
+                    }
+                    else
+                    {
+                        values.Add(Language.GetTextValue("Bestiary_Biomes.CorruptDesert"));
+                        isNormal = false;
+                    }
                 }
+                if (p.ZoneSnow && p.ZoneRockLayerHeight)
+                {
+                    values.Add(Language.GetTextValue("Bestiary_Biomes.CorruptIce"));
+                    isNormal = false;
+                }
+                if (isNormal)
+                {
+                    if (p.ZoneRockLayerHeight)
+                    {
+                        values.Add(Language.GetTextValue("Bestiary_Biomes.UndergroundCorruption"));
+                    } else
+                    {
+                        values.Add(Language.GetTextValue("Bestiary_Biomes.TheCorruption"));
+                    }
+                }
+            }
+            if (p.ZoneCrimson)
+            {
+                var isNormal = true;
+                if (p.ZoneDesert)
+                {
+                    if (p.ZoneUndergroundDesert)
+                    {
+                        values.Add(Language.GetTextValue("Bestiary_Biomes.CrimsonUndergroundDesert"));
+                        isNormal = false;
+                    }
+                    else
+                    {
+                        values.Add(Language.GetTextValue("Bestiary_Biomes.CrimsonDesert"));
+                        isNormal = false;
+                    }
+                }
+                if (p.ZoneSnow && p.ZoneRockLayerHeight)
+                {
+                    values.Add(Language.GetTextValue("Bestiary_Biomes.CrimsonIce"));
+                    isNormal = false;
+                }
+                if (isNormal)
+                {
+                    if (p.ZoneRockLayerHeight)
+                    {
+                        values.Add(Language.GetTextValue("Bestiary_Biomes.UndergroundCrimson"));
+                    }
+                    else
+                    {
+                        values.Add(Language.GetTextValue("Bestiary_Biomes.Crimson"));
+                    }
+                }
+            }
+            if (p.ZoneHallow)
+            {
+                var isNormal = true;
+                if (p.ZoneDesert)
+                {
+                    if (p.ZoneUndergroundDesert)
+                    {
+                        values.Add(Language.GetTextValue("Bestiary_Biomes.HallowUndergroundDesert"));
+                        isNormal = false;
+                    }
+                    else
+                    {
+                        values.Add(Language.GetTextValue("Bestiary_Biomes.HallowDesert"));
+                        isNormal = false;
+                    }
+                }
+                if (p.ZoneSnow && p.ZoneRockLayerHeight)
+                {
+                    values.Add(Language.GetTextValue("Bestiary_Biomes.HallowIce"));
+                    isNormal = false;
+                }
+                if (isNormal)
+                {
+                    if (p.ZoneRockLayerHeight)
+                    {
+                        values.Add(Language.GetTextValue("Bestiary_Biomes.UndergroundHallow"));
+                    }
+                    else
+                    {
+                        values.Add(Language.GetTextValue("Bestiary_Biomes.TheHallow"));
+                    }
+                }
+            }
+            if (p.ZoneSnow && !zoneInfected)
+            {
+                if (p.ZoneRockLayerHeight)
+                {
+                    values.Add(Language.GetTextValue("Bestiary_Biomes.UndergroundSnow"));
+                }
+                else
+                {
+                    values.Add(Language.GetTextValue("Bestiary_Biomes.Snow"));
+                }
+            }
+            if (p.ZoneDesert && !zoneInfected)
+            {
+                if (p.ZoneUndergroundDesert)
+                {
+                    values.Add(Language.GetTextValue("Bestiary_Biomes.UndergroundDesert"));
+                }
+                else
+                {
+                    values.Add(Language.GetTextValue("Bestiary_Biomes.Desert"));
+                }
+            }
+            if (p.ZoneJungle && !zoneInfected)
+            {
+                if (p.ZoneRockLayerHeight)
+                {
+                    values.Add(Language.GetTextValue("Bestiary_Biomes.UndergroundJungle"));
+                }
+                else
+                {
+                    values.Add(Language.GetTextValue("Bestiary_Biomes.Jungle"));
+                }
+            }
+            if (p.ZoneBeach)
+            {
+                values.Add(Language.GetTextValue("Bestiary_Biomes.Ocean"));
+            }
+            if (p.ZoneDungeon)
+            {
+                values.Add(Language.GetTextValue("Bestiary_Biomes.TheDungeon"));
+            }
+            if (p.ZoneGlowshroom)
+            {
+                values.Add(Language.GetTextValue("TownNPCMoodBiomes.Mushroom"));
+            }
+            if (p.ZoneTowerSolar)
+            {
+                values.Add(Language.GetTextValue("Bestiary_Biomes.SolarPillar"));
+            }
+            if (p.ZoneTowerVortex)
+            {
+                values.Add(Language.GetTextValue("Bestiary_Biomes.VortexPillar"));
+            }
+            if (p.ZoneTowerNebula)
+            {
+                values.Add(Language.GetTextValue("Bestiary_Biomes.NebulaPillar"));
+            }
+            if (p.ZoneTowerStardust)
+            {
+                values.Add(Language.GetTextValue("Bestiary_Biomes.StardustPillar"));
+            }
+            if (p.ZoneForest)
+            {
+                values.Add(Language.GetTextValue("TownNPCMoodBiomes.Forest"));
+            }
+            if (p.ZoneSkyHeight)
+            {
+                values.Add(Language.GetTextValue("GameUI.LayerSpace"));
+            }
+            if (p.ZoneUnderworldHeight)
+            {
+                values.Add(Language.GetTextValue("Bestiary_Biomes.TheUnderworld"));
+            }
+            if (p.ZoneGranite)
+            {
+                values.Add(Language.GetTextValue("Bestiary_Biomes.Granite"));
+            }
+            if (p.ZoneMarble)
+            {
+                values.Add(Language.GetTextValue("Bestiary_Biomes.Marble"));
+            }
+            if (p.ZoneHive)
+            {
+                values.Add(Language.GetTextValue("MapObject.BeeHive"));
+            }
+            if (p.ZoneLihzhardTemple)
+            {
+                values.Add(Language.GetTextValue("Bestiary_Biomes.TheTemple"));
+            }
+            if (p.ZoneGraveyard)
+            {
+                values.Add(Language.GetTextValue("Bestiary_Biomes.Graveyard"));
+            }
+            if (p.ZoneRain)
+            {
+                values.Add(Language.GetTextValue("GameUI.Rain"));
+            }
+            if (p.ZoneSandstorm)
+            {
+                values.Add(Language.GetTextValue("GameUI.Sandstorm"));
+            }
+            if (p.ZoneMeteor)
+            {
+                values.Add(Language.GetTextValue("Bestiary_Biomes.Meteor"));
             }
 
             // Mod Biomes
@@ -66,50 +255,6 @@ namespace DisplayBiome
             }
 
             return string.Join(",", values);
-        }
-
-        private string replaceZonePrefix(string zoneString)
-        {
-            return zoneString.Replace("Zone", "");
-        }
-
-        private string getText(Player p, string biome)
-        {
-            var text = "";
-            switch (biome)
-            {
-                case "Corrupt":
-                    biome = "TheCorruption";
-                    break;
-                case "Beach":
-                    biome = "Ocean";
-                    break;
-                case "Glowshroom":
-                    text = Language.GetTextValue("TownNPCMoodBiomes.Mushroom");
-                    break;
-                case "Hive":
-                    text = Language.GetTextValue("MapObject.BeeHive");
-                    break;
-                case "LihzhardTemple":
-                    biome = "TheTemple";
-                    break;
-            }
-            if (text == "")
-            {
-                var key = $"Bestiary_Biomes.{biome}";
-                text = Language.GetTextValue(key);
-                if (text.Equals(key))
-                {
-                    key = $"TownNPCMoodBiomes.{biome}";
-                    text = Language.GetTextValue(key);
-                    if (text.Equals(key))
-                    {
-                        key = $"GameUI.Layer{biome.Replace("Normal", "").Replace("Height", "")}";
-                        text = Language.GetTextValue(key);
-                    }
-                }
-            }
-            return text;
         }
     }
 }
