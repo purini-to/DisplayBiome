@@ -15,6 +15,9 @@ namespace DisplayBiome
 
     public class BiomeInfoDisplay : InfoDisplay
     {
+        private DateTime lastTime = DateTime.Now;
+        private string cache = "";
+
         public override string Texture => "Terraria/Images/UI/InfoIcon_8";
 
         public override void SetStaticDefaults()
@@ -29,6 +32,13 @@ namespace DisplayBiome
 
         public override string DisplayValue()
         {
+            var now = DateTime.Now;
+            if ((now - lastTime).Milliseconds < 500)
+            {
+                return cache;
+            }
+            lastTime = now;
+
             Player p = Main.LocalPlayer;
 
             // Vanila Biomes
@@ -254,7 +264,8 @@ namespace DisplayBiome
                 }
             }
 
-            return string.Join(",", values);
+            cache = string.Join(",", values);
+            return cache;
         }
     }
 }
