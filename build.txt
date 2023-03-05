@@ -1,0 +1,4 @@
+displayName = Display Biome
+author = Claude
+version = 0.1
+sortAfter = ThoriumMod
